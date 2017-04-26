@@ -25,6 +25,7 @@ public final class CameraUtils {
         }
         catch (Exception e){
             // Camera is not available (in use or does not exist)
+            Log.e(CameraUtils.class.getSimpleName(), e.getLocalizedMessage(), e);
         }
         return c; // returns null if camera is unavailable
     }
@@ -45,7 +46,7 @@ public final class CameraUtils {
 
                 File pictureFile = FileUtils.getOutputMediaFile(FileUtils.MEDIA_TYPE_IMAGE);
                 if (pictureFile == null){
-                    Log.d(CameraUtils.class.getSimpleName(), "Error creating media file, check storage permissions: ");
+                    Log.e(CameraUtils.class.getSimpleName(), "Error creating media file, check storage permissions: ");
                     return;
                 }
 
@@ -56,9 +57,9 @@ public final class CameraUtils {
                     fos.write(data);
                     fos.close();
                 } catch (FileNotFoundException e) {
-                    Log.d(CameraUtils.class.getSimpleName(), "File not found: " + e.getMessage());
+                    Log.e(CameraUtils.class.getSimpleName(), "File not found: " + e.getMessage(), e);
                 } catch (IOException e) {
-                    Log.d(CameraUtils.class.getSimpleName(), "Error accessing file: " + e.getMessage());
+                    Log.e(CameraUtils.class.getSimpleName(), "Error accessing file: " + e.getMessage(), e);
                 }
             }
         };

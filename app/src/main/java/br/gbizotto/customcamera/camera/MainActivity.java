@@ -1,5 +1,6 @@
 package br.gbizotto.customcamera.camera;
 
+import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +11,7 @@ import br.gbizotto.customcamera.R;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PictureTaken {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_capture)
     public void onCaptureButtonClick() {
-        Camera.PictureCallback pictureCallback = CameraUtils.getPictureCallback();
+        Camera.PictureCallback pictureCallback = CameraUtils.getPictureCallback(this);
         mCamera.takePicture(null, null, pictureCallback);
     }
 
@@ -43,5 +44,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mCamera = CameraUtils.releaseCamera(mCamera);
+    }
+
+    @Override
+    public void pictureSaved(String filePath) {
+        Intent intent = new Intent(this, ReviewPictureActivity.class);
+        intent.putExtra("filePath", filePath);
+        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
     }
 }

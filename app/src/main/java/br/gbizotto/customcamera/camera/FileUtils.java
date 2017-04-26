@@ -1,6 +1,5 @@
 package br.gbizotto.customcamera.camera;
 
-import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -16,11 +15,6 @@ public class FileUtils {
 
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
-
-    /** Create a file Uri for saving an image or video */
-    public static Uri getOutputMediaFileUri(int type){
-        return Uri.fromFile(getOutputMediaFile(type));
-    }
 
     /** Create a File for saving an image or video */
     public static File getOutputMediaFile(int type){

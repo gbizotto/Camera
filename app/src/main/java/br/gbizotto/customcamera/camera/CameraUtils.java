@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import br.gbizotto.customcamera.PictureTaken;
+
 /**
  * Created by Gabriela on 03/03/2017.
  */

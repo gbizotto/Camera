@@ -17,10 +17,12 @@
 package br.gbizotto.customcamera.camera2;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -31,10 +33,13 @@ import android.view.ViewGroup;
 import java.io.File;
 
 import br.gbizotto.customcamera.PermissionsUtils;
+import br.gbizotto.customcamera.PictureTaken;
 import br.gbizotto.customcamera.R;
+import br.gbizotto.customcamera.ReviewPictureActivity;
 
+@RequiresApi(api = 21)
 public class Camera2BasicFragment extends Fragment
-        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback, PictureTaken {
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
 
@@ -75,7 +80,7 @@ public class Camera2BasicFragment extends Fragment
         //https://github.com/googlesamples/android-Camera2Basic
         // Look at https://developer.android.com/guide/topics/media/camera.html#custom-camera to get solution for 20 and below.
 
-        CameraUtils.startCamera(getContext(), getActivity(), mFile, mTextureView);
+        CameraUtils.startCamera(getContext(), getActivity(), mFile, mTextureView, this);
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
@@ -161,4 +166,12 @@ public class Camera2BasicFragment extends Fragment
 
     };
 
+    @Override
+    public void pictureSaved(String filePath) {
+        Intent intent = new Intent(getActivity(), ReviewPictureActivity.class);
+        intent.putExtra("filePath", filePath);
+        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+    }
 }

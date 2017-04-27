@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
 
+import br.gbizotto.customcamera.PictureTaken;
 import br.gbizotto.customcamera.R;
+import br.gbizotto.customcamera.ReviewPictureActivity;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 

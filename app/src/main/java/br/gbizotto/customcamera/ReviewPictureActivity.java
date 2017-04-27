@@ -1,4 +1,4 @@
-package br.gbizotto.customcamera.camera;
+package br.gbizotto.customcamera;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

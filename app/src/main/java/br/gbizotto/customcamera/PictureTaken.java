@@ -1,4 +1,4 @@
-package br.gbizotto.customcamera.camera;
+package br.gbizotto.customcamera;
 
 /**
  * Created by gabriela on 4/26/17.

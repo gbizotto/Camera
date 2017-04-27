@@ -22,6 +22,7 @@ import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -37,12 +38,14 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import br.gbizotto.customcamera.PermissionsUtils;
+import br.gbizotto.customcamera.PictureTaken;
 import br.gbizotto.customcamera.R;
 
 /**
  * Created by Gabriela on 02/03/2017.
  */
 
+@RequiresApi(api = 21)
 public final class CameraUtils {
 
     private CameraUtils() {
@@ -178,9 +181,8 @@ public final class CameraUtils {
 
     private static boolean isFrontCamera = false;
 
-    /**
-     * Opens the camera specified by {@link Camera2BasicFragment#mCameraId}.
-     */
+    private static PictureTaken mPictureTaken;
+
     public static void openCamera(int width, int height) {
         if (!PermissionsUtils.checkCameraPermission(mContext)) {
             return;
@@ -252,7 +254,7 @@ public final class CameraUtils {
                 }
 
                 //TODO change here when I want to take a picture from the back
-                isFrontCamera = true;
+                isFrontCamera = false;
 
                 StreamConfigurationMap map = characteristics.get(
                         CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -502,8 +504,11 @@ public final class CameraUtils {
 
             mCaptureSession.stopRepeating();
             mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
+
+            mPictureTaken.pictureSaved(mFile.getAbsolutePath());
+
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Log.e(CameraUtils.class.getSimpleName(), e.getLocalizedMessage(), e);
         }
     }
 
@@ -610,6 +615,8 @@ public final class CameraUtils {
 
         private void process(CaptureResult result) {
 
+            Log.v(CameraUtils.class.getSimpleName(), "mState = " + mState);
+
             switch (mState) {
                 case STATE_PREVIEW: {
                     // We have nothing to do when the camera preview is working normally.
@@ -618,26 +625,31 @@ public final class CameraUtils {
                 case STATE_WAITING_LOCK: {
                     Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
 
-                    if (afState == null) {
-                        captureStillPicture();
-                    } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
-                            CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
-                        // CONTROL_AE_STATE can be null on some devices
-                        Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
-
-                        if (aeState == null ||
-                                aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
-                            mState = STATE_PICTURE_TAKEN;
-                            captureStillPicture();
-                        } else {
-                            runPrecaptureSequence();
-                        }
-                    }
+                    Log.v(CameraUtils.class.getSimpleName(), "afState = " + afState);
+                    captureStillPicture();
+//                    if (afState == null) {
+//                        captureStillPicture();
+//                    } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
+//                            CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
+//                        // CONTROL_AE_STATE can be null on some devices
+//                        Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
+//
+//                        Log.v(CameraUtils.class.getSimpleName(), "aeState = " + aeState);
+//
+//                        if (aeState == null ||
+//                                aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
+//                            mState = STATE_PICTURE_TAKEN;
+//                            captureStillPicture();
+//                        } else {
+//                            runPrecaptureSequence();
+//                        }
+//                    }
                     break;
                 }
                 case STATE_WAITING_PRECAPTURE: {
                     // CONTROL_AE_STATE can be null on some devices
                     Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
+                    Log.v(CameraUtils.class.getSimpleName(), "aeState = " + aeState);
                     if (aeState == null ||
                             aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE ||
                             aeState == CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED) {
@@ -648,6 +660,7 @@ public final class CameraUtils {
                 case STATE_WAITING_NON_PRECAPTURE: {
                     // CONTROL_AE_STATE can be null on some devices
                     Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
+                    Log.v(CameraUtils.class.getSimpleName(), "aeState = " + aeState);
                     if (aeState == null || aeState != CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
                         mState = STATE_PICTURE_TAKEN;
                         captureStillPicture();
@@ -761,11 +774,12 @@ public final class CameraUtils {
         stopBackgroundThread();
     }
 
-    public static void startCamera(Context context, Activity activity, File file, AutoFitTextureView textureView) {
+    public static void startCamera(Context context, Activity activity, File file, AutoFitTextureView textureView, PictureTaken pictureTaken) {
         mContext = context;
         mActivity = activity;
         mFile = file;
         mTextureView = textureView;
+        mPictureTaken = pictureTaken;
 
         startBackgroundThread();
     }

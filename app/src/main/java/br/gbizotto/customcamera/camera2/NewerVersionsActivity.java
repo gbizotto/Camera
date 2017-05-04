@@ -21,7 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import br.gbizotto.customcamera.R;
 
-public class CameraActivity extends AppCompatActivity {
+public class NewerVersionsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

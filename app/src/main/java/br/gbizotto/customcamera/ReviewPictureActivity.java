@@ -1,13 +1,13 @@
 package br.gbizotto.customcamera;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import br.gbizotto.customcamera.ImageUtils;
-import br.gbizotto.customcamera.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ReviewPictureActivity extends AppCompatActivity {
 
@@ -24,5 +24,10 @@ public class ReviewPictureActivity extends AppCompatActivity {
         String filePath = getIntent().getStringExtra("filePath");
 
         ImageUtils.loadImageAtImageView(this, mImgPicture, ImageUtils.getUriFromFile(filePath));
+    }
+
+    @OnClick(R.id.btn_accept)
+    public void onOkClick() {
+        startActivity(new Intent(this, RedirectActivity.class));
     }
 }

@@ -10,35 +10,40 @@ import android.widget.FrameLayout;
 import br.gbizotto.customcamera.PictureTaken;
 import br.gbizotto.customcamera.R;
 import br.gbizotto.customcamera.ReviewPictureActivity;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements PictureTaken {
+public class OlderVersionsActivity extends AppCompatActivity implements PictureTaken {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = OlderVersionsActivity.class.getSimpleName();
+
+    @BindView(R.id.camera_preview)
+    FrameLayout mFramePreview;
 
     private Camera mCamera;
     private CameraPreview mPreview;
+
+    private final boolean mIsFrontFacing = false;
+    private final String mFileName = "custom-camera-older";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
 
         // Create an instance of Camera
-        mCamera = CameraUtils.getCameraInstance();
+        mCamera = CameraUtils.getCameraInstance(mIsFrontFacing, this);
 
         // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+        mFramePreview.addView(mPreview);
     }
 
     @OnClick(R.id.button_capture)
     public void onCaptureButtonClick() {
-        Camera.PictureCallback pictureCallback = CameraUtils.getPictureCallback(this);
+        Camera.PictureCallback pictureCallback = CameraUtils.getPictureCallback(this, mFileName, this, mIsFrontFacing);
         mCamera.takePicture(null, null, pictureCallback);
     }
 

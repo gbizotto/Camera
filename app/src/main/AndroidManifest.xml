@@ -15,9 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".camera2.CameraActivity"
+            android:name=".camera2.NewerVersionsActivity"
             android:label="@string/app_name"></activity>
-        <activity android:name=".camera.MainActivity" />
+        <activity android:name=".camera.OlderVersionsActivity" />
         <activity android:name=".RedirectActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

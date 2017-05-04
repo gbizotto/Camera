@@ -4,4 +4,6 @@
     <string name="description_info">Info</string>
     <string name="request_permission">This sample needs camera permission.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="pictures_directory">custom-camera</string>
+    <string name="pictures_directory_error">It wasn\'t possible to create a folder for the pictures. Please, authorize the folder creation for this app.</string>
 </resources>
